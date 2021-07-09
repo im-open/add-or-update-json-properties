@@ -1,80 +1,72 @@
-# javascript-action-template
+# add-or-update-json-properties
 
-This template can be used to quickly start a new custom js action repository.  Click the `Use this template` button at the top to get started.
-
-## TODOs
-- Readme
-  - [ ] Update the Inputs section with the correct action inputs
-  - [ ] Update the Outputs section with the correct action outputs
-  - [ ] Update the Example section with the correct usage   
-- package.json
-  - [ ] Update the `name` with the new action value
-- main.js
-  - [ ] Implement your custom javascript action
-- action.yml
-  - [ ] Fill in the correct name, description, inputs and outputs
-- check-for-unstaged-changes.sh
-  - [ ] If you encounter a permission denied error when the build.yml workflow runs, execute the following command: `git update-index --chmod=+x ./check-for-unstaged-changes.sh`
-- .prettierrc.json
-  - [ ] Update any preferences you might have
-- CODEOWNERS
-  - [ ] Update as appropriate
-- Repository Settings
-  - [ ] On the *Options* tab check the box to *Automatically delete head branches*
-  - [ ] On the *Options* tab update the repository's visibility
-  - [ ] On the *Branches* tab add a branch protection rule
-    - [ ] Check *Require pull request reviews before merging*
-    - [ ] Check *Dismiss stale pull request approvals when new commits are pushed*
-    - [ ] Check *Require review from Code Owners*
-    - [ ] Check *Include Administrators*
-  - [ ] On the *Manage Access* tab add the appropriate groups
-- About Section (accessed on the main page of the repo, click the gear icon to edit)
-  - [ ] The repo should have a short description of what it is for
-  - [ ] Add one of the following topic tags:
-    | Topic Tag       | Usage                                    |
-    | --------------- | ---------------------------------------- |
-    | az              | For actions related to Azure             |
-    | code            | For actions related to building code     |
-    | certs           | For actions related to certificates      |
-    | db              | For actions related to databases         |
-    | git             | For actions related to Git               |
-    | iis             | For actions related to IIS               |
-    | microsoft-teams | For actions related to Microsoft Teams   |
-    | svc             | For actions related to Windows Services  |
-    | jira            | For actions related to Jira              |
-    | meta            | For actions related to running workflows |
-    | pagerduty       | For actions related to PagerDuty         |
-    | test            | For actions related to testing           |
-    | tf              | For actions related to Terraform         |
-  - [ ] Add any additional topics for an action if they apply    
-    
+An action for editing or adding new property values in a json file.  The property takes in an array of changes to make.  If the action finds the property it will update the value and if the property does not exist it will add it.
 
 ## Inputs
-| Parameter | Is Required | Description           |
-| --------- | ----------- | --------------------- |
-| `input-1` | true        | Description goes here |
-| `input-2` | false       | Description goes here |
 
-## Outputs
-| Output     | Description           |
-| ---------- | --------------------- |
-| `output-1` | Description goes here |
+| Parameter                     | Is Required | Description                                                                                                                                                                                   |
+| ----------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path-to-json-file`           | true        | The path and name of the json file to update: <br/>  *./src/MyProject/appsettings.json*                                                                                                       |
+| `properties-to-update-or-add` | true        | A json-parseable array of key value pairs to update the json with.  The kvp is the json property that should be updated (nested properties are strings separated with '.') and the new value. |
+| `space`                       | false       | The number of space characters to use as whitespace for indentation when the json file is saved.  Defaults to 2.                                                                              |
 
 ## Example
 
+If you start with this json:
+```json
+{
+  "ErrorUrl": "/dev-exceptions.html",
+  "ConnectionStrings": {
+    "SQL": "Server=tcp:localhost;Initial Catalog=MyDB;Integrated Security=true;"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Trace"
+    }
+  }
+}
+```
+
+And execute this workflow:
 ```yml
-# TODO: Fill in the correct usage
 jobs:
-  job1:
-    runs-on: [self-hosted, ubuntu-20.04]
+  deploy-prod:
+    runs-on: [ubuntu-20.04]
     steps:
       - uses: actions/checkout@v2
 
-      - name: Add Step Here
-        uses: im-open/this-repo@v1
+      - name: Update appsettings.json with Prod Values
+        uses: im-open/add-or-update-json-properties@v1.0.0
         with:
-          input-1: 'abc'
-          input-2: '123
+          path-to-json-file: './src/MyApp/appsettings.json'
+          properties-to-update-or-add: |
+            [
+              {"ErrorUrl": "/error.html"},
+              {"ConnectionStrings.SQL": "${{ secrets.SQL_CONN_STR}}"},
+              {"Logging.LogLevel.Default": "Warning"},
+              {"New.Prop.ThatDoesNotExist": "Wahoo!"}
+            ]
+          space: 4
+```
+
+The resulting appsettings.json file will look like this:
+```json
+{
+    "ErrorUrl": "/error.html",
+    "ConnectionStrings": {
+        "SQL": "****whatever_the_secret_value_is****"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Warning"
+        }
+    },
+    "New": {
+        "Prop": {
+            "ThatDoesNotExist": "Wahoo!"
+        }
+    }
+}
 ```
 
 ## Recompiling
