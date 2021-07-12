@@ -1,5 +1,5 @@
 {
-  "name": "custom-action-template",
+  "name": "add-or-update-json-properties",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,7 +19,9 @@
   "author": "wtw",
   "license": "ISC",
   "dependencies": {
-    "@actions/core": "^1.2.7"
+    "@actions/core": "^1.2.7",
+    "lodash.get": "^4.4.2",
+    "lodash.set": "^4.3.2"
   },
   "devDependencies": {
     "esbuild": "^0.12.8",
