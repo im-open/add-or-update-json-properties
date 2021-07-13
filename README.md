@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Update appsettings.json with Prod Values
-        uses: im-open/add-or-update-json-properties@v1.0.0
+        uses: im-open/add-or-update-json-properties@v1.0.1
         with:
           path-to-json-file: './src/MyApp/appsettings.json'
           properties-to-update-or-add: |

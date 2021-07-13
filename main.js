@@ -6,7 +6,8 @@ const get = require('lodash.get');
 function saveTheFile(jsonFile, fileContents) {
   core.info(`Saving changes to ${jsonFile}...`);
   const space = core.getInput('space');
-  const jsonData = JSON.stringify(fileContents, null, space);
+  const indentSpace = space && space.length > 0 ? parseInt(space) : 2;
+  const jsonData = JSON.stringify(fileContents, null, indentSpace);
   fs.writeFileSync(jsonFile, jsonData, 'utf8');
   core.info(`Finished Saving ${jsonFile}`);
 }

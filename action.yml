@@ -6,13 +6,13 @@ inputs:
   path-to-json-file:
     description: 'The path and name of the json file to update'
     required: true
-  space:
-    description: 'The number of space characters to use as whitespace for indentation when the json file is saved.  Defaults to 2.'
-    required: false
-    default: 2
   properties-to-update-or-add:
     description: 'A json-parseable list of key value pairs to update the json with.  [{ "Logging.Level.Default": "Trace"}]'
     required: false
+  space:
+    description: 'The number of space characters to use as whitespace for indentation when the json file is saved.  Defaults to 2.'
+    required: false
+    default: '2'
 
 runs:
   using: 'node12'
