@@ -1047,6 +1047,9 @@ function run() {
   saveTheFile(jsonFile, fileContents);
 }
 try {
+  core.warning(
+    'This action has been deprecated.  Use https://github.com/microsoft/variable-substitution instead.'
+  );
   run();
 } catch (error) {
   core.setFailed(`An error occurred while processing the file: ${error.message}`);
